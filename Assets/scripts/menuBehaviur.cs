@@ -24,11 +24,16 @@ public class menuBehaviur : MonoBehaviour
     public GameObject didintSpendAllPoints;
     public GameObject pointsLeftToSpend;
     public GameObject pointsLeftToSpendBackdrop;
+    public GameObject storyPlate;
+    
+ 
+    
 
     // Start is called before the first frame update
     void Start()
     {
         didintSpendAllPoints.gameObject.SetActive(false);
+        storyPlate.gameObject.SetActive(false);
     }
 
     // Register Button events
@@ -37,11 +42,11 @@ public class menuBehaviur : MonoBehaviour
         buttonint.onClick.AddListener(() => buttonCallBackint());
         buttonstr.onClick.AddListener(() => buttonCallBackstr());
         buttonagy.onClick.AddListener(() => buttonCallBacksagy());
-        buttonStartGame.onClick.AddListener(() => buttonCallBackStartGame());
+        buttonStartGame.onClick.AddListener(() => ButtonCallBackStartGame());
     }
 
     // Start the game only if all atribute points were spent if not display a message remove all menu elements off screen
-    private void buttonCallBackStartGame()
+    private void ButtonCallBackStartGame()
     {
         if (pointsLeft != 0)
         {
@@ -56,7 +61,7 @@ public class menuBehaviur : MonoBehaviour
             buttonagy.gameObject.SetActive(false);
             buttonStartGame.gameObject.SetActive(false);
             pointsLeftToSpendBackdrop.gameObject.SetActive(false);
-            // Debug.Log("Start the game points are at 0");
+            storyPlate.gameObject.SetActive(true);
         }
     }
     
