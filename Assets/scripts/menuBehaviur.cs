@@ -26,10 +26,6 @@ public class menuBehaviur : MonoBehaviour
     public GameObject pointsLeftToSpendBackdrop;
     public GameObject storyPlate;
     
- 
-    
-
-    // Start is called before the first frame update
     void Start()
     {
         didintSpendAllPoints.gameObject.SetActive(false);
@@ -64,7 +60,7 @@ public class menuBehaviur : MonoBehaviour
             storyPlate.gameObject.SetActive(true);
         }
     }
-    
+    //TODO: Missing button lockout before the animation finishes
     // adds 1 point to attribte agy evry time a button is pressed
     private void buttonCallBacksagy()
     {
