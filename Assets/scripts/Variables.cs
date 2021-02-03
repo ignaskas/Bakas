@@ -137,3 +137,42 @@ using Button = UnityEngine.UI.Button;
 
 // public int interpolationFramesCount = 45; // Number of Frames to complete the animation
 // private int _elapsedFrames = 0;
+
+
+
+
+// _cameraPos = myCamera.transform.position; // store the camera position
+// if (cameraStopTop.transform.position.y >= 15.34f | cameraStopBot.transform.position.y <= -15.43f) // this is Y
+// {
+// _cameraPos.x = playerPosition.transform.position.x; // Change the X position of the camera to player position
+// myCamera.transform.position = _cameraPos; // move the camera to the new position
+// }if (cameraStopLeft.transform.position.x <= -20.20f | cameraStopRight.transform.position.x >= 20.20f)
+// {
+// _cameraPos.y = playerPosition.transform.position.y; // Change the Y position of the camera to player position
+// myCamera.transform.position = _cameraPos; // move the camera to the new position
+// }else
+// {
+// transform.position = new Vector3(playerPosition.transform.position.x, playerPosition.transform.position.y, transform.position.z); // update camera position based on player position
+// }
+
+// only return true if we are not doing an attribute check
+// bool attributeCheck()
+// {
+//     return true;
+// }
+        
+// void complicatedBehaviour()
+// {
+            
+// }
+//Generates all posibale outcomes from current GameState
+// public void updatePossibilites()
+// {
+//     foreach(GameState aState in possibleOutcomes)
+//     {
+//         if (aState.attributeCheck())
+//         {
+//             aState.complicatedBehaviour();
+//         }
+//     }
+// }

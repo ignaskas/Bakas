@@ -7,9 +7,9 @@ using UnityEngine;
 public class menuBehaviur : MonoBehaviour
 {
     public int pointsLeft = 10;
-    public int inteStat = 0;
-    public int strStat = 0;
-    public int agyStat = 0;
+    public int intelStat;
+    public int strStat;
+    public int agyStat;
 
     public Text txtint;
     public Text txtstr;
@@ -25,11 +25,33 @@ public class menuBehaviur : MonoBehaviour
     public GameObject pointsLeftToSpend;
     public GameObject pointsLeftToSpendBackdrop;
     public GameObject storyPlate;
+    public GameObject key;
+    public GameObject sword;
+    public GameObject staff;
+    public GameObject blaster;
+    public GameObject flaskEmpty;
+    public GameObject flaskFull;
+    public GameObject coinPurse;
+    public GameObject armor;
+
+    public Main_Behaviour mainBehaviourRef;
     
     void Start()
     {
         didintSpendAllPoints.gameObject.SetActive(false);
         storyPlate.gameObject.SetActive(false);
+        key.gameObject.SetActive(true);
+        sword.gameObject.SetActive(false);
+        staff.gameObject.SetActive(false);
+        blaster.gameObject.SetActive(false);
+        flaskEmpty.gameObject.SetActive(true);
+        flaskFull.gameObject.SetActive(false);
+        coinPurse.gameObject.SetActive(false);
+        armor.gameObject.SetActive(false);
+        foreach (var i in mainBehaviourRef.menuCards)
+        {
+            i.gameObject.SetActive(false);
+        }
     }
 
     // Register Button events
@@ -50,6 +72,11 @@ public class menuBehaviur : MonoBehaviour
         }
         else
         {
+            mainBehaviourRef.CreateObjects();
+            foreach (var i in mainBehaviourRef.menuCards)
+            {
+                i.gameObject.SetActive(true);
+            }
             pointsLeftToSpend.gameObject.SetActive(false);
             didintSpendAllPoints.gameObject.SetActive(false);
             buttonint.gameObject.SetActive(false);
@@ -90,8 +117,8 @@ public class menuBehaviur : MonoBehaviour
     {
         if (pointsLeft > 0)
         {
-            inteStat += 1;
-            txtint.text = "Intelligence: " + inteStat.ToString();
+            intelStat += 1;
+            txtint.text = "Intelligence: " + intelStat.ToString();
             removePoint();
         }
         txtPointsLeft.text = "Points Left: " + pointsLeft.ToString();

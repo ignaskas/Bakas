@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +10,9 @@ using System.Threading.Tasks;
 // using UnityEditorInternal;
 // using StatePattern;
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.Serialization;
+ using UnityEngine.SocialPlatforms;
+ using UnityEngine.UI;
 using UnityEngine.UIElements;
 using Button = UnityEngine.UI.Button;
 using Image = UnityEngine.UI.Image;
@@ -20,12 +22,16 @@ public class Main_Behaviour : MonoBehaviour
 {
     public Button[] menuCards;
     public GameObject storyPlate;
+    public menuBehaviur menuBehaviurRef;
+    public Inventory inventoryRef;
 
     public Transform playerPosition;
     public int playerSpeed = 2;
 
     public GameState PlayerPoint { get; set; }
-    
+    public GameState CoinUpdate { get; set; }
+    public GameState FlaskUpdate { get; set; }
+
     public class GameState
     {
         public string name;
@@ -33,10 +39,10 @@ public class Main_Behaviour : MonoBehaviour
         public Position position;
         public GameState[] possibleOutcomes;
         public Vector3[] steps;
-        public Items Items;
         public CenterCard StoryCards;
+        public AttributeCheck StatCheck;
         
-        public GameState(string name, Cards storyCardName, Position position, GameState[] possibleOutcomes, Vector3[] steps, CenterCard storyCards)
+        public GameState(string name, Cards storyCardName, Position position, GameState[] possibleOutcomes, Vector3[] steps, CenterCard storyCards, AttributeCheck statReturn)
         {
             this.name = name;
             this.storyCardName = storyCardName;
@@ -44,29 +50,18 @@ public class Main_Behaviour : MonoBehaviour
             this.possibleOutcomes = possibleOutcomes;
             this.steps = steps;
             this.StoryCards = storyCards;
+            this.StatCheck = statReturn;
         }
-        // only return true if we are not doing an attribute check
-        Boolean attributeCheck()
-        {
-            return false;
-        }
-      
-        void complicatedBehaviour()
-        {
-            
-        }
-        //Generates all posibale outcomes from current GameState
-        public void updatePossibilites()
-        {
-            foreach(GameState aState in possibleOutcomes)
-            {
-                if (aState.attributeCheck())
-                {
-                    aState.complicatedBehaviour();
-                }
-            }
-        }
+    }
 
+    public class AttributeCheck
+    {
+        public bool AttributeReturn { set; get; }
+
+        public AttributeCheck(bool attributeReturn)
+        {
+            AttributeReturn = attributeReturn;
+        }
     }
     
     public class Cards
@@ -99,27 +94,9 @@ public class Main_Behaviour : MonoBehaviour
             StoryBlock = centerField;
         }
     }
-    
-    public class Items
-    {
-        public bool _sword, _staff, _blaster, _bagOfCoin, _emptyBagOfCoin, _armor, _flaskEmpty, _flaskFull, _key;
-
-        public Items(bool sword, bool staff, bool blaster, bool bagOfCoin, bool emptyBagOfCoin, bool armor, bool flaskEmpty, bool flaskFull, bool key)
-        {
-            this._sword = sword;
-            this._staff = staff;
-            this._blaster = blaster;
-            this._bagOfCoin = bagOfCoin;
-            this._emptyBagOfCoin = emptyBagOfCoin;
-            this._armor = armor;
-            this._flaskEmpty = flaskEmpty;
-            this._flaskFull = flaskFull;
-            this._key = key;
-        }
-    }
 
     //GameStates
-    public void Start()
+    public void CreateObjects()
     {
         //this is death
         GameState port = new GameState(
@@ -134,7 +111,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(1.633f, 9.643f, -1f),
                 new Vector3(3.73f, 8.814f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(true)
         );
         //this is death
         GameState miningCampSteal = new GameState(
@@ -148,7 +126,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(-0.67f, 13.77f, -1f),
                 new Vector3(-4.05f, 13.9f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(true)
         );
         //this is death
         GameState failToWin = new GameState(
@@ -161,7 +140,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(1.14f, -6.68f, -1f),
                 new Vector3(1.81f, -9.61f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(true)
         );
         
         //This is the end BITCOIN ending
@@ -176,7 +156,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(-0.67f, 13.77f, -1f),
                 new Vector3(-4.05f, 13.9f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(true)
         );
         
         //Dragon ending do an if check for items
@@ -194,7 +175,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(17.63f, -3.13f, -1f),
                 new Vector3(18.64f, -1.22f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(true)
         );
         //outskirts ending do roll on outcome
         GameState outskirts = new GameState(
@@ -208,7 +190,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(5.43f, 0.12f, -1f),
                 new Vector3(7.16f, 1.34f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(true)
         );
         //this is death
         GameState goToCityAfterJungle = new GameState(
@@ -222,7 +205,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(4.99f, -5.4f, -1f),
                 new Vector3(4.21f, -2.45f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(true)
         );
         
         //this is death
@@ -235,7 +219,8 @@ public class Main_Behaviour : MonoBehaviour
             {
                 new Vector3(-16.39f, 2.11f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(true)
         );
         
         //this is death do a roll for outcome
@@ -252,7 +237,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(17.536f, 7.588f, -1f),
                 new Vector3(18.191f, 6.756f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(true)
         );
         //do a roll for ending
         GameState toMountains = new GameState(
@@ -271,7 +257,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(18.46f, 13.36f, -1f),
                 new Vector3(18.95f, 13.99f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(true)
         );
         
         GameState miningCampTalkToTheBoss = new GameState(
@@ -285,7 +272,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(-0.67f, 13.77f, -1f),
                 new Vector3(-4.05f, 13.9f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(menuBehaviurRef.strStat >= 5)
         );
         
         GameState miningCamp = new GameState(
@@ -301,21 +289,54 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(0.92f, 13.22f, -1f),
                 new Vector3(1.81f, 13.5f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(true)
         );
         
+        GameState buyArmor = new GameState(
+            "BuyArmor",
+            new Cards(Resources.Load<Sprite>("cards_faces/armor")),
+            new Position(3.529f, -2.451f),
+            new [] {toDragon},
+            new []
+            {
+                new Vector3(3.529f, -2.451f, -1f),
+            },
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(false)
+        );
+        
+        GameState stealArmor = new GameState(
+            "StealArmor",
+            new Cards(Resources.Load<Sprite>("cards_faces/armor")),
+            new Position(18.64f, -1.22f),
+            new [] {toDragon},
+            new []
+            {
+                new Vector3(4.95f, -5.46f, -1f),
+                new Vector3(13.04f, -2.31f, -1f),
+                new Vector3(14.19f, -2.31f, -1f),
+                new Vector3(15.73f, -2.89f, -1f),
+                new Vector3(17.63f, -3.13f, -1f),
+                new Vector3(18.64f, -1.22f, -1f),
+            },
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(menuBehaviurRef.agyStat >= 5)
+        );
+
         GameState shop = new GameState(
             "Shop",
             new Cards(Resources.Load<Sprite>("cards_faces/armor")),
             new Position(3.529f, -2.451f),
-            new [] {toDragon}, //TODO: 1 more choice before leaving the town
+            new [] {toDragon, buyArmor, stealArmor},
             new []
             {
                 new Vector3(3.895f, -1.173f, -1f),
                 new Vector3(4.778f, -1.948f, -1f),
                 new Vector3(3.529f, -2.451f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(true)
         );
         
         GameState cityAfterQuest = new GameState(
@@ -329,7 +350,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(4.94f, -5.64f, -1f),
                 new Vector3(4.2f, -2.56f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(true)
         );
         
         GameState takeLootBack = new GameState(
@@ -343,7 +365,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(-1f, -6.63f, -1f),
                 new Vector3(-1f, -5.76f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(true)
         );
         
         GameState jungle = new GameState(
@@ -358,7 +381,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(2.116f, -11.071f, -1f),
 
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(true)
         );
         
         GameState helpMerchant = new GameState(
@@ -372,7 +396,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(1.815f, -8.836f, -1f),
                 new Vector3(2.304f, -10.633f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(true)
         );
         
         GameState ignoreMerchant = new GameState(
@@ -386,7 +411,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(4.94f, -5.64f, -1f),
                 new Vector3(4.2f, -2.56f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(true)
         );
         
         GameState quest = new GameState(
@@ -400,7 +426,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(-0.59f, -6.76f, -1f),
                 new Vector3(-1.25f, -5.89f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(true)
         );
         
         //city line coming from crossroads
@@ -418,7 +445,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(3.61f, 0.78f, -1f),
                 new Vector3(3.61f, -2.24f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(true)
         );
         
         //forest crossroads merge with road story if heading to city
@@ -433,7 +461,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(-5.19f, 6.34f, -1f),
                 new Vector3(-0.84f, 6.34f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(true)
         );
         
         GameState forrestIntCheck = new GameState(
@@ -447,7 +476,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(-5.19f, 6.34f, -1f),
                 new Vector3(-0.84f, 6.34f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(menuBehaviurRef.intelStat >= 5)
         );
         
         GameState forrestWalk = new GameState(
@@ -461,7 +491,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(-5.19f, 6.34f, -1f),
                 new Vector3(-0.84f, 6.34f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(true)
         );
         
         // forrest line starts here
@@ -476,7 +507,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(-17.07f, -2.11f, -1f),
                 new Vector3(-11.19f, 1.43f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(true)
         );
         
         GameState toBattlefield = new GameState(
@@ -489,7 +521,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(15.25f, 6.56f, -1f),
                 new Vector3(15.18f, 9.28f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(true)
         );
         
         GameState portal = new GameState(
@@ -503,7 +536,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(-9.36f, -13.29f, -1f),
                 new Vector3(15.13f, 3.81f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(true)
         );
         
         GameState road = new GameState(
@@ -518,7 +552,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(-1.18f, -6.77f, -1f),
                 new Vector3(-0.98f, -5.85f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Story_Template")),
+            new AttributeCheck(true)
         );
         //TODO: remove the first extra step of movement it is not needed
         GameState blaster = new GameState(
@@ -531,7 +566,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(-16.51f, -5.89f, -1f),
                 new Vector3(-12.82f, -6.55f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Dwarf_Life"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Dwarf_Life")),
+            new AttributeCheck(true)
         );
         
         GameState sword = new GameState(
@@ -544,7 +580,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(-16.51f, -5.89f, -1f),
                 new Vector3(-12.82f, -6.55f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Bastard_Sword"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Bastard_Sword")),
+            new AttributeCheck(true)
         );
         
         GameState staff = new GameState(
@@ -557,7 +594,8 @@ public class Main_Behaviour : MonoBehaviour
                 new Vector3(-16.51f, -5.89f, -1f), 
                 new Vector3(-12.82f, -6.55f, -1f), 
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Dragon_Run"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Dragon_Run")),
+            new AttributeCheck(true)
         );
         
         GameState home = new GameState(
@@ -569,15 +607,18 @@ public class Main_Behaviour : MonoBehaviour
             {
                 new Vector3(-16.42f, -5.76f, -1f),
             },
-            new CenterCard(Resources.Load<Sprite>("Story_Board/Beginning"))
+            new CenterCard(Resources.Load<Sprite>("Story_Board/Beginning")),
+            new AttributeCheck(true)
         );
-
+        
         PlayerPoint = home;
+        CoinUpdate = buyArmor;
+        FlaskUpdate = forrestIntCheck; //TODO: update this to dragon figth check
     }
-    
+//Move player
     private async void MoveMe(GameState stepsToTake)
     {
-        foreach (var currentStep in stepsToTake.steps)
+        foreach (var currentStep in stepsToTake.steps)//check current GameState.Steps that player has picked
         {
             StartCoroutine(MoveOverSeconds(gameObject, currentStep, playerSpeed));
             WhichSideDoIFace(transform.position.x, currentStep.x, transform.position.y, currentStep.y);
@@ -585,7 +626,7 @@ public class Main_Behaviour : MonoBehaviour
         }   
         
     }
-
+//Move over X frames
     public IEnumerator MoveOverSpeed(GameObject objectToMove, Vector3 end, float speed)
     {
         // speed should be 1 unit per second
@@ -596,7 +637,7 @@ public class Main_Behaviour : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
     }
-
+//move over X seconds
     private IEnumerator MoveOverSeconds(GameObject objectToMove, Vector3 end, float seconds)
     {
         float elapsedTime = 0;
@@ -610,7 +651,7 @@ public class Main_Behaviour : MonoBehaviour
 
         objectToMove.transform.position = end;
     }
-
+//Change the direction the player is facing based on the direction of movement
     private void WhichSideDoIFace (float currentX, float nextStepX, float currentY, float nextStepY) {
         if ((nextStepX >= currentX) && (nextStepY >= currentY)) {  //we are moving NW -- top rigth
             gameObject.GetComponent<SpriteRenderer>().flipX = true;
@@ -626,27 +667,33 @@ public class Main_Behaviour : MonoBehaviour
             gameObject.GetComponent<SpriteRenderer>().flipY = true;
         }
     }
-
+//Change the cards based on what GameState the player is currently in
     private void ChangeButtonImg(GameState currentState)
     {
         var i = 0;
         foreach (var buttonImage in currentState.possibleOutcomes)
         {
+            //TODO: buttonImage.attriubteCheck is returning false no matter the check
             var currentCard = menuCards[i];
-            if (!currentCard.gameObject.activeSelf)
+            if (!currentCard.gameObject.activeSelf)//show cards if they are currently hidden
             {
-                    currentCard.gameObject.SetActive(true);
+                currentCard.gameObject.SetActive(true);
+            }
+            if (!buttonImage.StatCheck.AttributeReturn)//only show the card if player has required stats
+            {
+                currentCard.gameObject.SetActive(false);
             }
             currentCard.GetComponent<Image>().sprite = buttonImage.storyCardName.CardImage;
             i++;
         }
 
-        while (i < 3)
+        while (i < 3)//hide cards if they are currently showing
         {
             menuCards[i].gameObject.SetActive(false);
             i++;
         }
     }
+
     //TODO: add life to map Movement of dragon fire animation water
 
     //TODO: add a random generator function for random outcome endings
@@ -657,8 +704,8 @@ public class Main_Behaviour : MonoBehaviour
             var chanceToWin = UnityEngine.Random.Range(0, 10);
             
         }
-    }
-    
+    } 
+    //change story based on what GameState the player is currently in
     private async void ChangeStoryPlate(GameState currentState)
     {
         var hideForTime = currentState.steps.Length;
@@ -703,13 +750,13 @@ public class Main_Behaviour : MonoBehaviour
 
         DEBUGFIELD.text = "";
     }
-    
+
     //Card1 button actions
     private void ButtonCallBackCard1()
     {
         PlayerPoint = PlayerPoint.possibleOutcomes[0];
+        inventoryRef.InventoryCheck();
         ChangeStoryPlate(PlayerPoint);
-        PlayerPoint.updatePossibilites();
         MoveMe(PlayerPoint);
         ChangeButtonImg(PlayerPoint);
     }
@@ -718,8 +765,8 @@ public class Main_Behaviour : MonoBehaviour
     private void ButtonCallBackCard2()
     {
         PlayerPoint = PlayerPoint.possibleOutcomes[1];
+        inventoryRef.InventoryCheck();
         ChangeStoryPlate(PlayerPoint);
-        PlayerPoint.updatePossibilites();
         MoveMe(PlayerPoint);
         ChangeButtonImg(PlayerPoint);
     }
@@ -728,8 +775,8 @@ public class Main_Behaviour : MonoBehaviour
     private void ButtonCallBackCard3()
     {
         PlayerPoint = PlayerPoint.possibleOutcomes[2];
+        inventoryRef.InventoryCheck();
         ChangeStoryPlate(PlayerPoint);
-        PlayerPoint.updatePossibilites();
         MoveMe(PlayerPoint);
         ChangeButtonImg(PlayerPoint);
     }
