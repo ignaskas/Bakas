@@ -6,68 +6,75 @@ using UnityEngine.UI;
 
 public class ToolTip : MonoBehaviour
 {
-    [SerializeField]
-    private Camera uiCamera;
-    
     private bool _toolTipToggle;
     private ItemButtons ItemButtonsObj { set; get; }
-    private GameObject ClickedButton;
-    public GameObject ToolTipTextArea;
-    
-    public GameObject key;
-    public GameObject sword;
-    public GameObject staff;
-    public GameObject blaster;
-    public GameObject flaskEmpty;
-    public GameObject flaskFull;
-    public GameObject coinPurse;
-    public GameObject armor;
+    public Text ToolTipTextArea;
 
-    void Update()
+    // toggle tooltip area when item is clicked change the description of the item based on item clicked
+    public void OnGameObjectClicked(GameObject clickedItem)
     {
-        if (Input.GetMouseButtonDown(0))
+        _toolTipToggle = !_toolTipToggle;
+        switch (clickedItem.tag)
         {
-            Vector2 ray = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            RaycastHit2D rayHit = Physics2D.Raycast(ray, Vector2.zero);
-            
-            // RaycastHit rayCastHit;
-            // Ray rayCast = Camera.main.ScreenPointToRay(Input.mousePosition);
-            // Physics.Raycast(rayCast, out rayCastHit)
-            if (rayHit)
-            {
-                Debug.Log(GameObject.FindWithTag("KeyButton"));
-                if (rayHit.collider.CompareTag("ArmorButton"))
-                {
-                    ClickedButton = GameObject.FindWithTag("ArmorButton");
-                    ItemButtonsObj = new ItemButtons(armor, "this is a armor");
-                    ToolTipToggle(ItemButtonsObj, ClickedButton, _toolTipToggle);
-                }
-                else if (rayHit.collider.CompareTag("KeyButton"))
-                {
-                    Debug.Log("we got a press!");
-                    ClickedButton = GameObject.FindWithTag("KeyButton");
-                    ItemButtonsObj = new ItemButtons(key, "this is a Key");
-                    _toolTipToggle = !_toolTipToggle;
-                    ToolTipToggle(ItemButtonsObj, ClickedButton, _toolTipToggle);
-                }
-            }
+            case "KeyButton":
+                ItemButtonsObj = new ItemButtons("this is a key");
+                ToolTipToggle(ItemButtonsObj, _toolTipToggle);
+                break;
+            case "SwordButton":
+                ItemButtonsObj = new ItemButtons("this is a Sword");
+                ToolTipToggle(ItemButtonsObj, _toolTipToggle);
+                break;
+            case "StaffButton":
+                ItemButtonsObj = new ItemButtons("this is a Staff");
+                ToolTipToggle(ItemButtonsObj, _toolTipToggle);
+                break;
+            case "BlasterButton":
+                ItemButtonsObj = new ItemButtons("this is a Blaster");
+                ToolTipToggle(ItemButtonsObj, _toolTipToggle);
+                break;
+            case "FlaskEmptyButton":
+                ItemButtonsObj = new ItemButtons("this is a empty flask");
+                ToolTipToggle(ItemButtonsObj, _toolTipToggle);
+                break;
+            case "FlaskFullButton":
+                ItemButtonsObj = new ItemButtons("this is a full flask");
+                ToolTipToggle(ItemButtonsObj, _toolTipToggle);
+                break;
+            case "CoinButton":
+                ItemButtonsObj = new ItemButtons("this is a bag of coins");
+                ToolTipToggle(ItemButtonsObj, _toolTipToggle);
+                break;
+            case "ArmorButton":
+                ItemButtonsObj = new ItemButtons("this is armor");
+                ToolTipToggle(ItemButtonsObj, _toolTipToggle);
+                break;
+            default:
+                Debug.Log("Wrong Value past to ToolTips");
+                break;
         }
     }
-
+    
+    // public void CreatToolTips(GameObject clickedItem)
+    // {
+    // ItemButtons KeyToolTip = new ItemButtons("this is a key", clickedItem);
+    // ItemButtonsObj = KeyToolTip;
+    // //     ToolTipToggle(KeyToolTip._GameObject, KeyToolTip._toolTipText, _toolTipToggle);
+    // }
+    
+    //This is stupid wy is this even a class?
     public class ItemButtons
     {
-        public GameObject _itemButtons;
         public string _toolTipText;
 
-        public ItemButtons(GameObject itemButtons, string toolTipText)
+        public ItemButtons(string toolTipText)
         {
-            this._itemButtons = itemButtons;
             this._toolTipText = toolTipText;
         }
     }
     
-    private void ToolTipToggle(ItemButtons currentItemToolTip, GameObject currentItemButton, bool toggle)
+    private void ToolTipToggle(ItemButtons currentItemToolTip, bool toggle)
     {
+        ToolTipTextArea.GetComponent<Text>().text =  currentItemToolTip._toolTipText;
         gameObject.SetActive(toggle);
     }
 }

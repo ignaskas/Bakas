@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+// using UnityEditor.UI;
 using UnityEngine.UI;
 using UnityEngine;
 
@@ -15,6 +16,7 @@ public class menuBehaviur : MonoBehaviour
     public Text txtstr;
     public Text txtagy;
     public Text txtPointsLeft;
+    public Text MainMenuText;
 
     public Button buttonint;
     public Button buttonstr;
@@ -33,9 +35,17 @@ public class menuBehaviur : MonoBehaviour
     public GameObject flaskFull;
     public GameObject coinPurse;
     public GameObject armor;
+    public GameObject blurMap;
 
     public Main_Behaviour mainBehaviourRef;
-    
+
+
+    // private void Awake()
+    // {
+    //     CanvasScaler canvasScale = GameObject.Find("Canvas").gameObject.GetComponent<CanvasScaler>();
+    //     canvasScale.scaleFactor = CalculateUiScale();
+    // }
+
     void Start()
     {
         didintSpendAllPoints.gameObject.SetActive(false);
@@ -48,22 +58,27 @@ public class menuBehaviur : MonoBehaviour
         flaskFull.gameObject.SetActive(false);
         coinPurse.gameObject.SetActive(false);
         armor.gameObject.SetActive(false);
-        foreach (var i in mainBehaviourRef.menuCards)
+        foreach (var buttons in mainBehaviourRef.menuCards)
         {
-            i.gameObject.SetActive(false);
+            buttons.gameObject.SetActive(false);
         }
+        // Debug.Log("My folders location on a phone   " + Application.persistentDataPath);
     }
-
-    // Register Button events
+    
     private void OnEnable()
     {
-        buttonint.onClick.AddListener(() => buttonCallBackint());
-        buttonstr.onClick.AddListener(() => buttonCallBackstr());
-        buttonagy.onClick.AddListener(() => buttonCallBacksagy());
+        buttonint.onClick.AddListener(() => ButtonCallBackInt());
+        buttonstr.onClick.AddListener(() => ButtonCallBackStr());
+        buttonagy.onClick.AddListener(() => ButtonCallBacksAgy());
         buttonStartGame.onClick.AddListener(() => ButtonCallBackStartGame());
     }
 
-    // Start the game only if all atribute points were spent if not display a message remove all menu elements off screen
+    // public void Update()
+    // {
+    //     Debug.Log(buttonint.transform.position.x + " " + buttonint.transform.position.y);
+    // }
+    
+    // Start the game only if all attribute points were spent and remove all menu elements off screen if not display a message
     private void ButtonCallBackStartGame()
     {
         if (pointsLeft != 0)
@@ -73,60 +88,90 @@ public class menuBehaviur : MonoBehaviour
         else
         {
             mainBehaviourRef.CreateObjects();
-            foreach (var i in mainBehaviourRef.menuCards)
+            foreach (var buttons in mainBehaviourRef.menuCards)
             {
-                i.gameObject.SetActive(true);
+                buttons.gameObject.SetActive(true);
             }
+            blurMap.gameObject.SetActive(false);
             pointsLeftToSpend.gameObject.SetActive(false);
             didintSpendAllPoints.gameObject.SetActive(false);
-            buttonint.gameObject.SetActive(false);
-            buttonstr.gameObject.SetActive(false);
-            buttonagy.gameObject.SetActive(false);
+            // buttonint.transform.position = new Vector3(1205.0f, 370.0f, gameObject.transform.position.z);
+            // buttonstr.transform.position = new Vector3(1205.0f, 436.0f, gameObject.transform.position.z);
+            // buttonagy.transform.position = new Vector3(1205.0f, 512.0f, gameObject.transform.position.z);
             buttonStartGame.gameObject.SetActive(false);
             pointsLeftToSpendBackdrop.gameObject.SetActive(false);
             storyPlate.gameObject.SetActive(true);
+            MainMenuText.gameObject.SetActive(false);
         }
     }
-    //TODO: Missing button lockout before the animation finishes
-    // adds 1 point to attribte agy evry time a button is pressed
-    private void buttonCallBacksagy()
+
+    // adds 1 point to attribute agy every time a button is pressed
+    private void ButtonCallBacksAgy()
     {
         if (pointsLeft > 0)
         {
-            agyStat += 1;
+            agyStat = Add(agyStat);
             txtagy.text = "Agility: " + agyStat.ToString();
-            removePoint();
+            RemovePoint();
         }
         txtPointsLeft.text = "Points Left: " + pointsLeft.ToString();
     }
     
-    // adds 1 points to attribute str evry time a button is pressed
-    private void buttonCallBackstr()
+    // adds 1 points to attribute str every time a button is pressed
+    private void ButtonCallBackStr()
     {
         if (pointsLeft > 0)
         {
-            strStat += 1;
+            strStat = Add(strStat);
             txtstr.text = "Strength: " + strStat.ToString();
-            removePoint();
+            RemovePoint();
         }
         txtPointsLeft.text = "Points Left: " + pointsLeft.ToString();
     }
     
-    // adds 1 points to attribute int evry time a button is presses
-    private void buttonCallBackint()
+    // adds 1 points to attribute int every time a button is presses
+    private void ButtonCallBackInt()
     {
         if (pointsLeft > 0)
         {
-            intelStat += 1;
+            intelStat = Add(intelStat);
             txtint.text = "Intelligence: " + intelStat.ToString();
-            removePoint();
+            RemovePoint();
         }
         txtPointsLeft.text = "Points Left: " + pointsLeft.ToString();
     }
 
-    // removes 1 point from atribute pool evry time a button is clicked
-    private void removePoint()
+    // removes 1 point from attribute pool every time a button is clicked
+    private void RemovePoint()
     {
         pointsLeft -= 1;
+    }
+
+    private int Add(int currentPoints)
+    {
+        return currentPoints + 1;
+    }
+
+    /*OnLoad get current device screen resolution scale UI to fit by comparing it to 1920 x 1080 base resolution
+     _________________________________________
+     |                                       |
+     |                                       |
+     |                                       |
+     |                                       |
+     |                                       |
+     |                                       |
+     _________________________________________
+     game is always in portrait mode
+     */
+    private float CalculateUiScale()
+    {
+        int screenWidth = Screen.currentResolution.width;
+        int screenHeight = Screen.currentResolution.height;
+        Vector2 scalerReferenceResolution = new Vector2(x: 1920f, y: 1080f);
+        int scalerMatchWidthOrHeight = 0;
+        // Debug.Log("width" + screenWidth + "Height" +  screenHeight);
+        
+        return Mathf.Pow(screenWidth / scalerReferenceResolution.x, 1f - scalerMatchWidthOrHeight) *
+               Mathf.Pow(screenHeight / scalerReferenceResolution.y, scalerMatchWidthOrHeight);
     }
 }

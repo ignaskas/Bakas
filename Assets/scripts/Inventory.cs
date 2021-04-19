@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Inventory : MonoBehaviour
@@ -21,7 +22,7 @@ public class Inventory : MonoBehaviour
     //Update GameStates to reflect the choice
     public void InventoryCheck()
     {
-        switch (MainBehaviour.PlayerPoint.name)
+        switch (MainBehaviour.PlayerPoint.Name)
             {
                 case "sword":
                     _sword = !_sword;
@@ -40,6 +41,7 @@ public class Inventory : MonoBehaviour
                     _key = !_key;
                     UpdateInventory(_blaster, menuBehaviurRef.blaster);
                     UpdateInventory(_key, menuBehaviurRef.key);
+                    MainBehaviour.blasterUpdate.StatCheck.AttributeReturn = _blaster;
                     break;
                 case "forrestIntCheck":
                     _flaskEmpty = !_flaskEmpty;
@@ -58,17 +60,19 @@ public class Inventory : MonoBehaviour
                     _armor = !_armor;
                     UpdateInventory(_coinPurse, menuBehaviurRef.coinPurse);
                     UpdateInventory(_armor, menuBehaviurRef.armor);
+                    MainBehaviour.ArmorUpdate.StatCheck.AttributeReturn = _armor;
                     break;
                 case "StealArmor":
                     _armor = !_armor;
                     UpdateInventory(_armor, menuBehaviurRef.armor);
+                    MainBehaviour.ArmorUpdate.StatCheck.AttributeReturn = _armor;
                     break;
                 default:
-                
+                    Debug.Log("Wrong State past to items check" + " [" + MainBehaviour.PlayerPoint.Name + "]");
                     break;
             }
     }
-//Show hide items based on Players Choice 
+//Show hide items
     private void UpdateInventory(bool itemState, GameObject currentItem)
     {
         currentItem.SetActive(itemState);

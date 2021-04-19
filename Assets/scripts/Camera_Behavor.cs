@@ -29,7 +29,7 @@ public class Camera_Behavor : MonoBehaviour
         {
             _cameraPos.x = playerPosition.transform.position.x; // Change the X position of the camera to player position
             myCamera.transform.position = _cameraPos; // move the camera to the new position
-        }else if (cameraStopLeft.transform.position.x <= -20.476f | cameraStopRight.transform.position.x >= 20.476f)
+        }else if (cameraStopLeft.transform.position.x <= -20.476f | cameraStopRight.transform.position.x >= 20.476f) //  this is X
         {
             _cameraPos.y = playerPosition.transform.position.y; // Change the Y position of the camera to player position
             myCamera.transform.position = _cameraPos; // move the camera to the new position
